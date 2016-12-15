@@ -11,6 +11,26 @@ RunCA Manual (PBcR uses the same options): http://wgs-assembler.sourceforge.net/
 Log onto Calculon2 root: (root@calculon2.plantbiology.msu.edu).
 Note: On Calculon2 you don’t have to change where you are installing like we did in HPC.
 
+#### Canu
+<pre><code>$ cd /share/apps/_tarArchives   #save program zip file into archive
+# In a local terminal window:
+$ sftp root@calculon2.plantbiology.msu.edu 
+$ put Downloads/canu-1.4.Linux-amd64.tar.xz
+
+# Back in Calculon2
+$ mv root/canu-1.4.Linux-amd64.tar.xz share/apps/_tarArchives/
+$ mkdir ../Canu
+$ cp canu-1.4.Linux-amd64.tar.xz ../Canu/
+$ tar xvfJ canu-1.4.Linux-amd64.tar.xz          # Decompress
+$ mkdir 1.4 
+$ mv canu-1.4 1.4/                     # Nick stores everything by name/version.
+$ cd 1.4/canu-1.4/
+    
+# Test out canu to see if it's working
+$ cd Linux-amd64/bin/
+$ ./canu</code></pre>
+
+#### Celera
 <pre><code>$ cd apps/_tarArchives/               #save program zip file into archive
 $ wget [url to program]
 $ mkdir ../Celera
@@ -30,8 +50,40 @@ $ cd ../Linux-amd64/bin/
 $ ./PBcR</code></pre>
 
 
+### Make Canu into a Calculon2 module
+#### Prep Canu directory in Modules
+<pre><code>$ cd /usr/share/Modules/modulefiles/bio
+$ mkdir Canu
+$ cd Canu
+$ vim 1.4                           #Copy format from another module file. Just be sure to change the appfile, app, ver!
+$ cp 1.4 canu
+# Go back to modulefiles dir (cd ../../)
+$ vim UpdateBioModules.sh           # Add "cp bio/Canu/canu ."
+$ sh UpdateBioModules.sh            # ls and you should see canu in the list.</code></pre>
+
+Pull Modules Here to Prep for Pushing them in the Comp Nodes
+<pre><code>$ cd /share/modules
+$ sh 1_PullCustomModules.sh</code></pre>
+
+Load to the computing modules
+<pre><code>$ ssh compute-0-1
+$ cd /share/modules/
+$ sh 2_PushCustomModules.sh
+$ cd ../../usr/share/Modules/modulefiles
+$ sh UpdateBioModules.sh               # This should make the canu file show up!
+
+#Test
+$ module load canu
+$ canu
+$ logout
+
+# Repeate in compute-0-2:
+$ ssh compute-0-2
+$ ...
+</code></pre>
+
 ### Make Celera into a Calculon2 module
-Prep Celera directory in Modules
+#### Prep Celera directory in Modules
 <pre><code>$ cd /usr/share/Modules/modulefiles/bio
 $ mkdir Celera
 $ cd Celera
