@@ -55,7 +55,7 @@ $ ./PBcR</code></pre>
 <pre><code>$ cd /usr/share/Modules/modulefiles/bio
 $ mkdir Canu
 $ cd Canu
-$ vim 1.4                           #Copy format from another module file. Just be sure to change the appfile, app, ver!
+$ vim 1.4                           #Copy from another module file. Change the appfile, app, ver, and the path to the bin (the first prepend-path line - note any lines after that can be removed unless they are needed by the new module).
 $ cp 1.4 canu
 # Go back to modulefiles dir (cd ../../)
 $ vim UpdateBioModules.sh           # Add "cp bio/Canu/canu ."
@@ -69,12 +69,12 @@ Load to the computing modules
 <pre><code>$ ssh compute-0-1
 $ cd /share/modules/
 $ sh 2_PushCustomModules.sh
-$ cd ../../usr/share/Modules/modulefiles
+$ cd /usr/share/Modules/modulefiles
 $ sh UpdateBioModules.sh               # This should make the canu file show up!
 
 #Test
 $ module load canu
-$ canu
+$ canu                                 #or try $ ./canu
 $ logout
 
 # Repeate in compute-0-2:
@@ -111,8 +111,16 @@ $ ssh compute0-1
 #Repeat above steps in this compute node.</code></pre>
 
 
+# Test run on E. coli dataset using Canu
+Instructions from Canu: http://canu.readthedocs.io/en/latest/quick-start.html
 
-# Run PBcR on Example E. coli dataset
+<pre><code>$ curl -L -o p6.25x.fastq http://gembox.cbcb.umd.edu/mhap/raw/ecoli_p6_25x.filtered.fastq
+$ canu  -p ecoli -d ecoli-auto  genomeSize=4.8m  -pacbio-raw p6.25x.fastq gnuplotTested=true useGrid=false</code></pre>
+
+Note on useGrid: Canu wants to use the grid-engine (Sungrid something...) but ours isn't working so turn grid off (ok since we only have 2 compute nodes, Nick can just set it so that it uses all the resources on one node.)
+
+
+# Run PBcR on Example E. coli dataset using Celera
 The PacBio corrected Reads (PBcR) algorithm from Celera is designed for high-noise single molecule sequencing. It uses MinHash alignment process (MHAP) to increase speed and decrease memory usage.
 
 ssh azodi@calculon2.plantbiology.msu.edu
