@@ -140,3 +140,7 @@ $ cd 00_PacBio/00_Ecoli/</code></pre>
 $ nohup PBcR -l ecoli -s celera.spec -pbCNS -fastq ecoli_filtered.fastq genomeSize=4650000 sgeName=ecoli "sge=-A ecoli” &
 
 *Error that it is trying to submit a job!
+
+
+
+# Assemble Tetraselmis using Canu 
