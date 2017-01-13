@@ -144,4 +144,9 @@ $ nohup PBcR -l ecoli -s celera.spec -pbCNS -fastq ecoli_filtered.fastq genomeSi
 
 
 # Assemble Tetraselmis using Canu 
-Nick uploaded the data in the commons folder. Did a preliminary read quality check 81% of the reads had a quality score (PHRED) of 7 or better and 64% had a score of 10 or better (10% error rate). Total reads = 17741. 
+Nick uploaded the data in the commons folder (/export/home/common/TetraPacBio/). Did a preliminary read quality check 81% of the reads had a quality score (PHRED) of 7 or better and 64% had a score of 10 or better (10% error rate). Total reads = 17741. 
+
+Test by assembling just the first subreads fastq file:
+<pre><code> $ cp /export/home/common/TetraPacBio/AllFASTQ/*.subreads.fastq .
+$ nohup canu -p Tetra664 -d Tetra664_170112 genomeSize=680m errorRate=0.013 -pacbio-raw *subreads.fastq gnuplotTested=true useGrid=false & </code></pre>
+
