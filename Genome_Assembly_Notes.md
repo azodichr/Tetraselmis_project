@@ -150,3 +150,8 @@ Test by assembling just the first subreads fastq file:
 <pre><code> $ cp /export/home/common/TetraPacBio/AllFASTQ/*.subreads.fastq .
 $ nohup canu -p Tetra664 -d Tetra664_170112 genomeSize=680m errorRate=0.013 -pacbio-raw *subreads.fastq gnuplotTested=true useGrid=false & </code></pre>
 
+
+
+# Down the road:
+LastZ - compare genome across algae (multiZ)
+Green Cut - known photosynthetic genes to use for training the maker annotation. Do these ones manually.
