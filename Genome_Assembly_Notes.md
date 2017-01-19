@@ -151,7 +151,7 @@ Test by assembling just the first subreads fastq file:
 $ nohup canu -p Tetra664 -d Tetra664_170112 genomeSize=680m errorRate=0.013 -pacbio-raw *subreads.fastq gnuplotTested=true useGrid=false & </code></pre>
 
 The PLB planned generator test (1/16/17 at 9:00 am) shut down calculon2 and stopped the code. Restart on 1/19/17 at 1:30 pm.
-<pre><code>$ nohup canu -p Tetra664 -d Tetra664_170119 genomeSize=680m errorRate=0.013 -pacbio-raw *subreads.fastq gnuplotTested=true useGrid=false & </code></pre>
+<pre><code>$ nohup canu -p Tetra664 -d Tetra664_170112 genomeSize=680m errorRate=0.013 -pacbio-raw *subreads.fastq gnuplotTested=true useGrid=false & </code></pre>
 Job ID: 11266
 
 
