@@ -171,6 +171,12 @@ $ /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170215 -pacbio-ra
 
 </code></pre>
 
+### Canu process notes:
+Correction process (NDS:TSK:Req’dMemory:hrs)
+1. Submits canu_X that runs for 10 minutes then “H” (1:8:4:4)
+2. Submits meryl_X that runs for under 2 hours then finishes (1:9:18:4)
+3. Submits cormhap_X (1:9:18:168)
+
 
 
 # Down the road:
