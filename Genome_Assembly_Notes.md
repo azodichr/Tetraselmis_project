@@ -154,6 +154,24 @@ The PLB planned generator test (1/16/17 at 9:00 am) shut down calculon2 and stop
 <pre><code>$ nohup canu -p Tetra664 -d Tetra664_170112 genomeSize=680m errorRate=0.013 -pacbio-raw *subreads.fastq gnuplotTested=true useGrid=false & </code></pre>
 Job ID: 11266
 
+# Run Canu locally installed on Nicks's HPC
+wd: /mnt/scratch/azodichr/Tet_assemb
+ssh dev-intel16
+module load Java/1.8.0_31
+
+<pre><code> 
+$ nohup /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170214 -pacbio-raw  /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=TetAssembly_1 gridOptions="-l walltime=167:55:00,ncpus=28,mem=32GB" maxMemory=256 maxThreads=28 & 
+
+$ nohup /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170214 -pacbio-raw  /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=TetAssembly_1 gridOptions="-l walltime=3:55:00,mem=8GB -V" maxMemory=256 maxThreads=28 &
+
+$ nohup /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170214 -pacbio-raw  /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=TetAssembly_1 gridOptions="-V" maxMemory=256 maxThreads=28 &
+
+$ /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170215 -pacbio-raw  /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=TetAssembly_1 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:55:00,mem=4GB -V" gridOptionsCNS="-l nodes=1:ppn=8,walltime=48:00:00,mem=32GB -V" gridOptionsCOR="-l nodes=6:ppn=28,walltime=167:55:00,mem=32GB -V" gridOptionsOEA="-l nodes=6:ppn=28,walltime=167:55:00,mem=32GB -V" gridOptionsCORMHAP="-l nodes=6:ppn=28,walltime=167:55:00,mem=32GB -V" gridOptionsOBTMHAP="-l nodes=6:ppn=28,walltime=167:55:00,mem=32GB -V" gridOptionsOBTOVL="-l nodes=6:ppn=28,walltime=167:55:00,mem=32GB -V" gridOptionsUTGOVL="-l nodes=6:ppn=28,walltime=167:55:00,mem=32GB -V"
+
+
+</code></pre>
+
+
 
 # Down the road:
 LastZ - compare genome across algae (multiZ)
