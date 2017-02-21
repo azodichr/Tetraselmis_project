@@ -172,6 +172,8 @@ $ /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170215 -pacbio-ra
 
 $ /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170221 -pacbio-raw  /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=TetAssembly_2 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V"
 
+$ /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170221_B -pacbio-raw  /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=TetAssembly_2 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V" gridOptionsCORMHAP="-l mem=32GB"
+
 
 </code></pre>
 
