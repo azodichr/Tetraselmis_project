@@ -173,9 +173,26 @@ $ /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170215 -pacbio-ra
 $ /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170221 -pacbio-raw  /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=TetAssembly_2 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V"
 
 $ /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170221_B -pacbio-raw  /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=TetAssembly_2 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V" gridOptionsCORMHAP="-l mem=32GB"
+</code></pre>
 
+### Try again with adding more wall time and memory to the corrections mhap step. 
+With the last runs there were a lot of walltime/memory errors. 
+<pre><code>
 $ /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170222 -pacbio-raw  /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=170222 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V" gridOptionsCORMHAP="-l walltime=8:00:00,mem=32GB"
+</code></pre>
+1. Precompute step timed out on 1 job (39688266[170]). Reran it using the following code from scratch/azodichr/Tet_assemb/Tetra664_170222/canu-scripts/canu.01.out:
+<pre><code>
+      qsub \
+        -l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V -l walltime=8:00:00,mem=32GB -l mem=18g -l nodes=1:ppn=9 \
+        -d `pwd` -N "cormhap_Tetra664_170222" \
+        -t 170 \
+        -j oe -o /mnt/scratch/azodichr/Tet_assemb/Tetra664_170222/correction/1-overlapper/precompute.\$PBS_ARRAYID.out \
+        /mnt/scratch/azodichr/Tet_assemb/Tetra664_170222/correction/1-overlapper/precompute.sh
+</code></pre>
 
+2. Correction MHAP had 11 job cancel (39713843[X] - X = 12, 23, 71, 194, 206, 207, 209, 212, 215, 218, 221. Reran it using the following code from scratch/azodichr/Tet_assemb/Tetra664_170222/canu-scripts/canu.02.out:
+<pre><code>
+qsub -l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V -l walltime=8:00:00,mem=32GB -l mem=18g -l nodes=1:ppn=9 -d `pwd` -N "cormhap_Tetra664_170222" -t X -j oe -o /mnt/scratch/azodichr/Tet_assemb/Tetra664_170222/correction/1-overlapper/mhap.\$PBS_ARRAYID.out /mnt/scratch/azodichr/Tet_assemb/Tetra664_170222/correction/1-overlapper/mhap.sh
 </code></pre>
 
 ### Canu process notes:
