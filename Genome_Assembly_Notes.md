@@ -195,6 +195,12 @@ $ /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170222 -pacbio-ra
 qsub -l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V -l walltime=8:00:00,mem=32GB -l mem=18g -l nodes=1:ppn=9 -d `pwd` -N "cormhap_Tetra664_170222" -t X -j oe -o /mnt/scratch/azodichr/Tet_assemb/Tetra664_170222/correction/1-overlapper/mhap.\$PBS_ARRAYID.out /mnt/scratch/azodichr/Tet_assemb/Tetra664_170222/correction/1-overlapper/mhap.sh
 </code></pre>
 
+### Try again with adding even more wall time to the corrections mhap step. 
+With the last runs there were a lot of walltime/memory errors. 
+<pre><code>
+/mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170228 -pacbio-raw  /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=170228 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V" gridOptionsCORMHAP="-l walltime=24:00:00,mem=32GB"
+</code></pre>
+
 ### Canu process notes:
 Correction process (NDS:TSK:Req’dMemory:hrs)
 1. Submits canu_X that runs for 10 minutes then “H” (1:8:4:4)
