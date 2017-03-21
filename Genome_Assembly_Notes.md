@@ -201,6 +201,16 @@ With the last runs there were a lot of walltime/memory errors.
 /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170228 -pacbio-raw  /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=170228 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V" gridOptionsCORMHAP="-l walltime=24:00:00,mem=32GB"
 </code></pre>
 
+
+### Nick IDed a subset of fastq files that might be causing the problem (m161028...)
+Move "bad" fastq files to /mnt/scratch/azodichr/Tet_assemb/00_Corrected/00_Bad_m161028/
+Have Shin-Han run: 
+<pre><code>
+module load Java/1.8.0_31
+
+/mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170321 -pacbio-raw /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=Tet_0321 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V" gridOptionsCORMHAP="-l walltime=12:00:00,mem=32GB"
+</code></pre>
+
 ### Canu process notes:
 Correction process (NDS:TSK:Req’dMemory:hrs)
 1. Submits canu_X that runs for 10 minutes then “H” (1:8:4:4)
