@@ -205,11 +205,18 @@ With the last runs there were a lot of walltime/memory errors.
 ### Nick IDed a subset of fastq files that might be causing the problem (m161028...)
 Move "bad" fastq files to /mnt/scratch/azodichr/Tet_assemb/00_Corrected/00_Bad_m161028/
 Have Shin-Han run: 
-<pre><code>
-module load Java/1.8.0_31
+<pre><code>module load Java/1.8.0_31
 
-/mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170321 -pacbio-raw /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=Tet_0321 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V" gridOptionsCORMHAP="-l walltime=12:00:00,mem=32GB"
-</code></pre>
+/mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170321 -pacbio-raw /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=Tet_0321 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V" gridOptionsCORMHAP="-l walltime=12:00:00,mem=32GB"</code></pre>
+
+Nick may have found more bad datasets (m161:022, 023, 024, 027, 029). 
+Origional data size: 93 G
+After removing m161028: 92 G
+After removing the rest: 86 G
+
+<pre><code>module load Java/1.8.0_31
+
+/mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170323 -pacbio-raw /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=Tet_0323 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V" gridOptionsCORMHAP="-l walltime=18:00:00,mem=32GB"</code></pre>
 
 ### Canu process notes:
 Correction process (NDS:TSK:Req’dMemory:hrs)
