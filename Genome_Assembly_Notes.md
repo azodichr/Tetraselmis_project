@@ -218,6 +218,9 @@ After removing the rest: 86 G
 
 /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170323 -pacbio-raw /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=Tet_0323 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=4GB -V" gridOptionsCORMHAP="-l walltime=18:00:00,mem=32GB"</code></pre>
 
+4/6/17
+<pre><code> /mnt/home/panchyni/bin/canu -correct -p Tetra664 -d Tetra664_170321 -pacbio-raw /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=Tet_0406 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=8GB -V" gridOptionsCORMHAP="-l walltime=12:00:00,mem=64GB"</code></pre>
+
 ### Canu process notes:
 Correction process (NDS:TSK:Req’dMemory:hrs)
 1. Submits canu_X that runs for 10 minutes then “H” (1:8:4:4)
