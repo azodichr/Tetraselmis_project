@@ -228,6 +228,10 @@ After removing the rest: 86 G
 <pre><code> /mnt/home/panchyni/bin/canu0317 -correct -p Tetra664 -d Tetra664_170407 -pacbio-raw /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=Tet_0406 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=64GB -V" gridOptionsCORMHAP="-l walltime=12:00:00,mem=64GB"</code></pre>
 
 
+4/14/17: Changing it to requesting 68 GB in the main gridOptions slowed it down A LOT! change back to 8BG.
+<pre><code> /mnt/home/panchyni/bin/canu0317 -correct -p Tetra664 -d Tetra664_170414 -pacbio-raw /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=Tet_0406 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=8GB -V" gridOptionsCORMHAP="-l walltime=12:00:00,mem=64GB"</code></pre>
+
+
 ### Canu process notes:
 Correction process (NDS:TSK:Req’dMemory:hrs)
 1. Submits canu_X that runs for 10 minutes then “H” (1:8:4:4)
