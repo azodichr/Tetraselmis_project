@@ -232,6 +232,14 @@ After removing the rest: 86 G
 <pre><code> /mnt/home/panchyni/bin/canu0317 -correct -p Tetra664 -d Tetra664_170414 -pacbio-raw /mnt/scratch/azodichr/Tet_assemb/00_Corrected/*subreads.fastq genomeSize=680m errorRate=0.013 gridOptionsJobName=Tet_0406 maxMemory=256 maxThreads=28 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=8GB -V" gridOptionsCORMHAP="-l walltime=12:00:00,mem=64GB"</code></pre>
 
 
+# Run assembly on the trimmed reads Nick completed on Calculon2
+5/10/17
+<pre><code>scp azodi@calculon2.plantbiology.msu.edu:/data/scratch/panchy/TetraselmisAssembly/Tetra664_04122017_TrimAssemble/Tetra664.TrimmedReads.fasta
+module load Java/1.8.0_31
+</code></pre>
+/mnt/home/panchyni/bin/canu0317 -assemble -p Tetra664 -d Tetra664_170510 genomeSize=680m correctedErrorRate=0.013 gridOptionsJobName=Tet_0510 -pacbio-corrected Tetra664.TrimmedReads.fasta gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=8GB -V"
+
+
 ### Canu process notes:
 Correction process (NDS:TSK:Req’dMemory:hrs)
 1. Submits canu_X that runs for 10 minutes then “H” (1:8:4:4)
