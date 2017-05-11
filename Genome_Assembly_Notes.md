@@ -237,8 +237,10 @@ After removing the rest: 86 G
 <pre><code>scp azodi@calculon2.plantbiology.msu.edu:/data/scratch/panchy/TetraselmisAssembly/Tetra664_04122017_TrimAssemble/Tetra664.TrimmedReads.fasta
 module load Java/1.8.0_31
 </code></pre>
-/mnt/home/panchyni/bin/canu0317 -assemble -p Tetra664 -d Tetra664_170510 genomeSize=680m correctedErrorRate=0.013 gridOptionsJobName=Tet_0510 -pacbio-corrected Tetra664.TrimmedReads.fasta gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=8GB -V"
 
+First try:  ### Jobs started going over their wall time during the UTGOVL stage (first 70 jobs finished in time, then they started erroring out... set walltime limit to 20 hours.)
+<pre><code>/mnt/home/panchyni/bin/canu0317 -assemble -p Tetra664 -d Tetra664_170511 genomeSize=680m correctedErrorRate=0.013 gridOptionsJobName=Tet_0510 -pacbio-corrected Tetra664.TrimmedReads.fasta merylMemory=8 gridOptions="-l nodes=1:ppn=8,walltime=3:59:00,mem=8GB -V" gridOptionsUTGOVL="-l walltime=20:00:00,mem=12GB"
+</code></pre>
 
 ### Canu process notes:
 Correction process (NDS:TSK:Req’dMemory:hrs)
