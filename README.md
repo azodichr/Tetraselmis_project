@@ -261,11 +261,9 @@ hmm-assembler.pl tetra10xpilonx3.zff.length50_aed0.25 params > tetra10xpilonx3.z
 
 
 ### Augustus
-module load icc/2017.1.132-GCC-6.3.0-2.27  impi/2017.1.132
-module load augustus
 
 #### Refine and format set of annotated proteins to train and test on
-** A. Remove genes from ab initio MAKER round 1 that have >90% amino acid similarity (over 90% of the length of the gene) with other genes (cause redundant genes can cause overfitting).**
+A. Remove genes from ab initio MAKER round 1 that have >90% amino acid similarity (over 90% of the length of the gene) with other genes (cause redundant genes can cause overfitting).
 ```
 grep -P "maker\tgene" tetra.contigs.10x.pilon_3.fa.all.gff > tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly
 python ~/GitHub/Utilities/FastaManager.py -f gff_to_coord -gff tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly
@@ -280,7 +278,8 @@ python ~/GitHub/Utilities/FastaManager.py -f getseq2 -fasta tetra.contigs.10x.pi
 ```
 *Note: Went from 29,962 genes for training to 7,949 genes *
 
-** B. Remove genes that aren't hits in GreenCut**
+B. Remove genes that aren't hits in GreenCut
+
 formatdb -i tetra_genes_DupsRemoved.txt.fa -p F
 ```
 formatdb -i ../proteins_CEG_GCcr_GCc64.fa -p T
@@ -290,7 +289,7 @@ python ../../07_trin_10xpilonx3_2/augustus_retrain_strict/filter_genes_3.py -gff
 ```
 *Note: Went from 7,949 genes for training to 983 genes*
 
-** C. Convert gff to genbank and split into training and testing (90/10) **
+C. Convert gff to genbank and split into training and testing (90/10)
 ```
 perl ~/GitHub/Augustus/scripts/gff2gbSmallDNA.pl tetra.contigs.10x.pilon_3.fa.all.gff.filtered ~/02_Tetraselmis/06_MAKER/07_trin_10xpilonx3_2/tetra.contigs.10x.pilon_3.fasta 1000 tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank
 perl ~/GitHub/Augustus/scripts/randomSplit.pl tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank 98
