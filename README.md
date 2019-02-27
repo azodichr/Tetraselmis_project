@@ -316,20 +316,22 @@ optimize_augustus.pl --species=tetraselmis_2sp tetra.contigs.10x.pilon_3.fa.all.
 ```
 
 **Training Results**
-|   	|Sensitivity	|Specificity   	|
+
+|Type|Sensitivity	|Specificity|
 |---	|---	|---	|
-|Nucleotide level 	|0.87 |0.69 	|
-|Transcript   	|0.104|0.082|
+|Nucleotide level|0.87|0.69|
+|Transcript|0.104|0.082|
 
 Apply to testing set
 ```
 augustus --species=tetraselmis_2sp --AUGUSTUS_CONFIG_PATH=/mnt/home/azodichr/GitHub/Augustus/config/ tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank.test > test_results.txt
 ```
 **Testing Results**
-|   	|Sensitivity	|Specificity   	|
+
+|Type|Sensitivity|Specificity|
 |---	|---	|---	|
-|Nucleotide level 	|0.88 |0.71 	|
-|Transcript   	|0.13|0.11|
+|Nucleotide level|0.88 |0.71|
+|Transcript|0.13|0.11|
 
 
 
