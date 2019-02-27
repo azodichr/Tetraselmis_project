@@ -363,6 +363,43 @@ Parameters to adjust in the maker_opts.ctl file:
 
 # BUSCO Analysis
 
+```
+module load python3
+export PATH="/mnt/home/azodichr/LocalPrograms/augustus.2.5.5/bin:$PATH"
+export PATH="/mnt/home/azodichr/LocalPrograms/augustus.2.5.5/scripts:$PATH"
+export AUGUSTUS_CONFIG_PATH="/mnt/home/azodichr/LocalPrograms/augustus.2.5.5/config/"
+```
+
+**Genome** 
+```
+ln -s /mnt/gs18/scratch/users/azodichr/10xgenom_2232_20180405/01_bam/Tet_10x_pilon_round3/tetra.contigs.10x.pilon_3.fa.fasta 00_Genome/.
+export BUSCO_CONFIG_FILE="/mnt/home/azodichr/02_Tetraselmis/07_BUSCO/busco/config/config.ini"
+python ../busco/scripts/run_BUSCO.py --i tetra.contigs.10x.pilon_3.fa.fasta --out tetra_pilon10xx3_genome --lineage_path ../busco/lineages/eukaryota_odb9/ --mode geno
+```
+**Transcriptomes (testing to see if we're just not annotating them well)**
+```
+ln -s /mnt/gs18/scratch/users/azodichr/10xgenom_2232_20180405/02_Assembly/trinity_181228.Trinity.fasta 02_transcriptomes/.
+python ../busco/scripts/run_BUSCO.py --i trinity_181228.Trinity.fasta --out tetra_trans_TrinGuid_Pilon10xx3 --lineage_path ../busco/lineages/eukaryota_odb9/ --mode tran
+```
+
+**Protein sequences from MAKER annotation**
+```
+ln -s ~/02_Tetraselmis/06_MAKER/07_trin_10xpilonx3_2/tetra.contigs.10x.pilon_3.fa.maker.output/tetra.contigs.10x.pilon_3.fa.all.maker.proteins.fasta 01_peptides/.
+python ../busco/scripts/run_BUSCO.py --i tetra.contigs.10x.pilon_3.fa.all.maker.proteins.fasta --out tetra_prot_TrinGuid_Pilon10xx3 --lineage_path ../busco/lineages/eukaryota_odb9/ --mode prot
+```
+
+
+**Plot BUSCO summaries**
+```
+wd: /mnt/home/azodichr/02_Tetraselmis/07_BUSCO/BUSCO_summaries 
+cp ../00_Genome/run_tetra_pilon10x_genome/short_summary_tetra_pilon10x_genome.txt .
+cp ../01_peptides/run_tetra_prot_TrinGuid_Pilon10x/short_summary_tetra_prot_TrinGuid_Pilon10x.txt .
+cp ../02_transcriptomes/run_tetra_trans_TrinGuid_Pilon10x/short_summary_tetra_trans_TrinGuid_Pilon10x.txt .
+
+python busco/scripts/generate_plot.py --working_directory BUSCO_summaries/
+```
+
+
 
 
 # Expression level time course
@@ -419,390 +456,6 @@ python ~shius/codes/qsub_hpc.py -f queue -u azodichr -c run_fastQC_2nd.txt -w 60
 
 
 
-
-
-
-######### BUSCO ##########
-
-module load python3
-
-!! If running in genome mode (--mode geno) need to set the paths to augustus
-# export BUSCO_CONFIG_FILE="/mnt/home/azodichr/02_Tetraselmis/07_BUSCO/busco/config/config.ini"
-
-export PATH="/mnt/home/azodichr/LocalPrograms/augustus.2.5.5/bin:$PATH"
-export PATH="/mnt/home/azodichr/LocalPrograms/augustus.2.5.5/scripts:$PATH"
-export AUGUSTUS_CONFIG_PATH="/mnt/home/azodichr/LocalPrograms/augustus.2.5.5/config/"
-
-
-# Genome 
-wd: /mnt/home/azodichr/02_Tetraselmis/07_BUSCO/00_Genome
-python ../busco/scripts/run_BUSCO.py --i tetra.unitigs.fasta --out tetra_genome --lineage_path ../busco/lineages/eukaryota_odb9/ --mode geno
-python ../busco/scripts/run_BUSCO.py --i tetra.unitigs.pilon.fasta --out tetra_pilon_genome --lineage_path ../busco/lineages/eukaryota_odb9/ --mode geno
-
-
-
-# Protein sequences from MAKER annotation
-wd: /mnt/home/azodichr/02_Tetraselmis/07_BUSCO/01_peptides
-ln -s ../../06_MAKER/01_trinity_denovo/tetra.unitigs.maker.output/tetra.unitigs.all.maker.proteins.fasta
-python ../busco/scripts/run_BUSCO.py --i tetra.unitigs.all.maker.proteins.fasta --out tetra_prot_TrinDeNovo --lineage_path ../busco/lineages/eukaryota_odb9/ --mode prot
-
-ln -s ../../06_MAKER/02_trinity_guided/01_FromHISAT2/tetra.unitigs.maker.output/tetra.unitigs.all.maker.proteins.fasta tetra.unitigs.all.maker.TrinityHISAT.proteins.fasta
-python ../busco/scripts/run_BUSCO.py --i tetra.unitigs.all.maker.TrinityHISAT.proteins.fasta --out tetra_prot_TrinGuid --lineage_path ../busco/lineages/eukaryota_odb9/ --mode prot
-
-ln -s ../../06_MAKER/03_stringtie/01_FromHISAT2/tetra.unitigs.maker.output/tetra.unitigs.all.maker.proteins.fasta tetra.unitigs.all.maker.StringTieHISAT.proteins.fasta
-python ../busco/scripts/run_BUSCO.py --i tetra.unitigs.all.maker.StringTieHISAT.proteins.fasta --out tetra_prot_StringTie --lineage_path ../busco/lineages/eukaryota_odb9/ --mode prot
-
-ln -s ~/02_Tetraselmis/06_MAKER/04_trinity_pilon/tetra.unitigs.pilon.maker.output/tetra.unitigs.pilon.all.maker.proteins.fasta .
-python ../busco/scripts/run_BUSCO.py --i tetra.unitigs.pilon.all.maker.proteins.fasta --out tetra_prot_TrinGuid_Pilon --lineage_path ../busco/lineages/eukaryota_odb9/ --mode prot
-
-ln -s ../../06_MAKER/04_trinity_pilon2/tetra.unitigs.pilon.maker.output/tetra.unitigs.pilon.all.maker.proteins.fasta .
-python ../busco/scripts/run_BUSCO.py --i tetra.unitigs.pilon.all.maker.proteins.fasta --out tetra_prot_TrinGuid_Pilon2 --lineage_path ../busco/lineages/eukaryota_odb9/ --mode prot
-
-
-# Transcriptomes (testing to see if we're just not annotating them well)
-wd: /mnt/home/azodichr/02_Tetraselmis/07_BUSCO/mkdir 02_transcriptomes
-
-ln -s ~/02_Tetraselmis/02_TimeCourse_Transcriptomics/01_DataProcessing/06_TrinityGuided/03_Pilon/Tet_transcriptome_TrinGuid_Pilon_HISAT.fasta .
-ln -s ~/02_Tetraselmis/02_TimeCourse_Transcriptomics/01_DataProcessing/07_StringTie/01_FromHISAT2/Tet_transcr_stringtie.fa .
-ln -s ~/02_Tetraselmis/02_TimeCourse_Transcriptomics/01_DataProcessing/06_TrinityGuided/trinity_out_dir/Tet_transcr_guidedHISAT_trinity.fasta .
-ln -s ~/02_Tetraselmis/02_TimeCourse_Transcriptomics/01_DataProcessing/06_TrinityGuided/03_Pilon/trinity_out_dir/Tet_transcriptome_TrinGuidPilon2_HISAT.fasta .
-
-python ../busco/scripts/run_BUSCO.py --i Tet_transcr_guidedHISAT_trinity.fasta --out tetra_trans_TrinGuid --lineage_path ../busco/lineages/eukaryota_odb9/ --mode geno
-python ../busco/scripts/run_BUSCO.py --i Tet_transcr_stringtie.fa --out tetra_trans_StringTie --lineage_path ../busco/lineages/eukaryota_odb9/ --mode geno
-python ../busco/scripts/run_BUSCO.py --i Tet_transcriptome_TrinGuid_Pilon_HISAT.fasta --out tetra_trans_TrinGuid_Pilon --lineage_path ../busco/lineages/eukaryota_odb9/ --mode geno
-python ../busco/scripts/run_BUSCO.py --i Tet_transcriptome_TrinGuidPilon2_HISAT.fasta --out tetra_trans_TrinGuid_Pilon2 --lineage_path ../busco/lineages/eukaryota_odb9/ --mode geno
-
-
-
-# Plot BUSCO summaries:
-wd: /mnt/home/azodichr/02_Tetraselmis/07_BUSCO/BUSCO_summaries 
-cp ../00_genome/run_tetra_genome/short_summary_tetra_genome.txt .
-cp ../00_Genome/run_tetra_pilon_genome/short_summary_tetra_pilon_genome.txt .
-cp ../01_peptides/run_tetra_prot_TrinDeNovo/short_summary_tetra_prot_TrinDeNovo.txt .
-cp ../01_peptides/run_tetra_prot_TrinGuid/short_summary_tetra_prot_TrinGuid.txt .
-cp ../01_peptides/run_tetra_prot_StringTie/short_summary_tetra_prot_StringTie.txt .
-cp ../01_peptides/run_tetra_prot_TrinGuid_Pilon2/short_summary_tetra_prot_TrinGuid_Pilon2.txt .
-cp ../02_transcriptomes/run_tetra_trans_TrinGuid_Pilon/short_summary_tetra_trans_TrinGuid_Pilon.txt .
-cp ../02_transcriptomes/run_tetra_trans_TrinGuid_Pilon2/short_summary_tetra_trans_TrinGuid_Pilon2.txt .
-cp ../02_transcriptomes/run_tetra_trans_trinity/short_summary_tetra_trans_trinity.txt .
-cp ../02_transcriptomes/run_tetra_trans_StringTie/short_summary_tetra_trans_StringTie.txt .
-
-python busco/scripts/generate_plot.py --working_directory BUSCO_summaries/
-
-
-
-# Run busco on unassembled reads to determine if the genes are there and just not assembling!!
-wd: /mnt/home/azodichr/02_Tetraselmis/07_BUSCO/03_unassembled
-
-ln -s /mnt/scratch/panchyni/TetraFASTA/tetra.unassembled.fasta .
-python ../busco/scripts/run_BUSCO.py --i tetra.unassembled.fasta --out tetra_unassembled --lineage_path ../busco/lineages/eukaryota_odb9/ --mode geno
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-################ Transcriptome Assembly - Annotation - BUSCO - Quantification #######################
-
-
-
-
-
-
-###################### MAKER Annotation - ab inito gene model predictions (i.e. Round #1) ###################### 
-
-wd: /mnt/home/azodichr/02_Tetraselmis/06_MAKER/07_trin_10xpilonx3_2
-ln -s /mnt/gs18/scratch/users/azodichr/10xgenom_2232_20180405/01_bam/Tet_10x_pilon_round3/tetra.contigs.10x.pilon_3.fa.fasta .
-ln -s /mnt/gs18/scratch/users/azodichr/10xgenom_2232_20180405/02_Assembly/trinity_181228.Trinity.fasta .
-ln -s /mnt/gs18/scratch/users/azodichr/10xgenom_2232_20180405/02_Assembly/trinity_181228.Trinity.fasta.stats .
-ln -s ../annot_proteins.fa .
-cp ../04_trinity_pilon/run_maker .
-
-module purge
-module load GCC/7.2.0-2.29 MPICH/3.2.1 
-module load maker/2.31.9
-
-maker -CTL
-# Specify file names and set est2gene=1 in the "maker_opts.ctl" file
-
-sbatch run_maker
-
-
-# Check results:
-cd /mnt/home/azodichr/02_Tetraselmis/06_MAKER/04_trinity_pilon/tetra.unitigs.pilon.maker.output
-# Check datastore_index.log to make sure each contig finished:
-grep "FAILED" tetra.contigs.10x.pilon_3.fa_master_datastore_index.log | wc -l
-grep "SKIPPED" tetra.contigs.10x.pilon_3.fa_master_datastore_index.log | wc -l
-grep "RETRY" tetra.contigs.10x.pilon_3.fa_master_datastore_index.log | wc -l
-
-fasta_merge -d tetra.contigs.10x.pilon_3.fa_master_datastore_index.log
-gff3_merge -d tetra.contigs.10x.pilon_3.fa_master_datastore_index.log
-
-# Get number of genes
-grep ">" tetra.contigs.10x.pilon_3.fa.all.maker.proteins.fasta | wc -l
-## 42,219
-
-python ~shius/codes/FastaManager.py -f get_sizes -fasta tetra.contigs.10x.pilon_3.fa.all.maker.proteins.fasta
-
-
-
-#####################  Retraining ab initio gene models using AUGUSTUS   #######################3#
-
-
-Following instructions from: http://augustus.gobics.de/binaries/retraining.html
-
-module load icc/2017.1.132-GCC-6.3.0-2.27  impi/2017.1.132
-module load augustus
-
-wd: /mnt/home/azodichr/02_Tetraselmis/06_MAKER/07_trin_10xpilonx3_2/augustus_retrain
-ln -s ../tetra.contigs.10x.pilon_3.fa.maker.output_EST_PROT_2Gene/tetra.contigs.10x.pilon_3.fa.all.gff .
-
-1. Compile training and testing genes
-
-A. Remove genes from ab initio MAKER round 1 that have >90% amino acid similarity (over 90% of the length of the gene) with other genes (cause redundant genes can cause overfitting).
-grep -P "maker\tgene" tetra.contigs.10x.pilon_3.fa.all.gff > tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly
-python ~/GitHub/Utilities/FastaManager.py -f gff_to_coord -gff tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly
-python ~/GitHub/Utilities/FastaManager.py -f get_stretch4 -coords tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord -fasta ../tetra.contigs.10x.pilon_3.fasta
-
-module purge
-module load BLAST/2.2.26-Linux_x86_64
-formatdb -i tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord.fa -p F
-blastall -p blastn -d tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord.fa -i tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord.fa -o blastnE00001 -e 0.00001 -a 8 -m 8
-python ../../07_trin_10xpilonx3_2/augustus_retrain_strict/filter_genes_1.py -b blastnE00001 -f tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord.fa
-python ~/GitHub/Utilities/FastaManager.py -f getseq2 -fasta tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord.fa -name tetra_genes_DupsRemoved.txt
-
-*RESULTS*
-* 07_trin_10xpilonx3_2: went from 21,562 genes in the original gff to XX genes after removing the ones with >90% sequence identity on at least 90% of the gene length. *
-* 08_Pilon10x3_remake_prot: went from 53,375 genes for training to 13345 *
-* 09_Pilon10x3_prot_3species: went from 29,962 genes for training to 7949 genes *
-
-
-
-B. Remove genes that aren't hits in GreenCut 
-formatdb -i tetra_genes_DupsRemoved.txt.fa -p F
-
-*07*
-ln -s ../../
-formatdb -i ../proteins_CEG_GCcr_GCc64.fa -p T
-blastall -p blastx -d ../proteins_CEG_GCcr_GCc64.fa -i tetra_genes_DupsRemoved.txt.fa -o blastx_greencut -e 0.01 -a 8 -m 8
-
-*08*
-formatdb -i ../greencut_noPlastid_cd.fa -p T
-blastall -p blastx -d ../greencut_noPlastid_cd.fa -i tetra_genes_DupsRemoved.txt.fa -o blastx_greencut -e 0.01 -a 8 -m 8
-
-
-*09*
-formatdb -i ../proteins_CEG_GCcr_GCc64.fa -p T
-blastall -p blastx -d ../proteins_CEG_GCcr_GCc64.fa -i tetra_genes_DupsRemoved.txt.fa -o blastx_greencut -e 0.01 -a 8 -m 8
-
-
-python ../../07_trin_10xpilonx3_2/augustus_retrain_strict/filter_genes_2.py -b blastx_greencut -f1 tetra_genes_DupsRemoved.txt
-
-
-C. Remove genes and accompanying gene model info from gff file if not in tetra_genes_DupsRemoved_GreenCutHits.txt
-
-python ../../07_trin_10xpilonx3_2/augustus_retrain_strict/filter_genes_3.py -gff tetra.contigs.10x.pilon_3.fa.all.gff -f tetra_genes_DupsRemoved_GreenCutHits.txt
-
-
-*RESULTS*
-* 07_trin_10xpilonx3_2: went from XX genes to 750 genes. *
-* 08_Pilon10x3_remake_prot: went from 13,345 genes for training to 2275 genes*
-* 09_Pilon10x3_prot_3species: went from 7,951 genes for training to 983 genes *
-
-
-
-# Convert gff into genbank format for Augustus
-perl ~/GitHub/Augustus/scripts/gff2gbSmallDNA.pl tetra.contigs.10x.pilon_3.fa.all.gff.filtered ~/02_Tetraselmis/06_MAKER/07_trin_10xpilonx3_2/tetra.contigs.10x.pilon_3.fasta 1000 tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank
-
-
-Note 1000 is the max-size-gene-flanking (i.e. it will grab 1kb up and downstream of the gene to add to the genebank file)
-
-# Split genbank file into training and testing (use 10% of genes for testing to start)
-
-perl ~/GitHub/Augustus/scripts/randomSplit.pl tetra.contigs.10x.pilon_3.fa.all.filtered.genbank 227  # 08
-perl ~/GitHub/Augustus/scripts/randomSplit.pl tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank 98  # 09
-
-
-2. Create and optimize meta parameters file for tetraselmis, train model, and test model
-module load icc/2017.1.132-GCC-6.3.0-2.27  impi/2017.1.132
-module load augustus
-
-# 08
-mkdir tetraselmis
-cp generic/* tetraselmis/.
-cd tetraselmis/
-for i in *; do mv $i $(echo $i | sed 's/generic/tetraselmis/'); done
-sed -i 's/generic_/tetraselmis_/g' tetraselmis_parameters.cfg
-
-optimize_augustus.pl --species=tetraselmis tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank.train --metapars=/mnt/home/azodichr/GitHub/Augustus/config/species/tetraselmis/tetraselmis_metapars.cfg --AUGUSTUS_CONFIG_PATH=/mnt/home/azodichr/GitHub/Augustus/config/
-
-
-# 09
-mkdir tetraselmis_2sp
-cp generic/* tetraselmis_2sp/.
-cd tetraselmis_2sp/
-for i in *; do mv $i $(echo $i | sed 's/generic/tetraselmis_2sp/'); done
-sed -i 's/generic_/tetraselmis_2sp_/g' tetraselmis_2sp_parameters.cfg
-
-optimize_augustus.pl --species=tetraselmis_2sp tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank.train --metapars=/mnt/home/azodichr/GitHub/Augustus/config/species/tetraselmis_2sp/tetraselmis_2sp_metapars.cfg --AUGUSTUS_CONFIG_PATH=/mnt/home/azodichr/GitHub/Augustus/config/
-
-* Note this optimization step also trains using the best parameters.*
-
-Training results:
-08: Transcript level: sensitivity = 0.075, specificity = 0.067. Nucleotide level: sensitivity = 0.86, specificity = 0.68
-09: Transcript level: sensitivity = 0.104, specificity = 0.082. Nucleotide level: sensitivity = 0.87, specificity = 0.69
-
-
-3. Test AUGUSTUS with selected parameters
-
-# 08 
-augustus --species=tetraselmis_2sp --AUGUSTUS_CONFIG_PATH=/mnt/home/azodichr/GitHub/Augustus/config/ tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genbank.test > test_results.txt
----------------------------------------------\
-                 | sensitivity | specificity |
----------------------------------------------|
-nucleotide level |       0.828 |       0.692 |
----------------------------------------------/
-----------------------------------------------------------------------------\
-transcript | #pred | #anno |   TP |   FP |   FN | sensitivity | specificity |
-----------------------------------------------------------------------------|
-gene level |   267 |   227 |   23 |  244 |  204 |       0.101 |      0.0861 |
-----------------------------------------------------------------------------/
-
-
-# 09
-augustus --species=tetraselmis_2sp --AUGUSTUS_CONFIG_PATH=/mnt/home/azodichr/GitHub/Augustus/config/ tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank.test > test_results.txt
-
----------------------------------------------\
-                 | sensitivity | specificity |
----------------------------------------------|
-nucleotide level |       0.878 |       0.711 |
----------------------------------------------/
-----------------------------------------------------------------------------\
-transcript | #pred | #anno |   TP |   FP |   FN | sensitivity | specificity |
-----------------------------------------------------------------------------|
-gene level |   114 |    98 |   13 |  101 |   85 |       0.133 |       0.114 |
-----------------------------------------------------------------------------/
-
-
-4. Train SNAP
-module purge
-module load GCC/7.2.0-2.29 MPICH/3.2.1
-module load maker/2.31.9
-
-# export 'confident' gene models from MAKER and rename to something meaningful
-maker2zff -x 0.25 -l 50 -d ../09_Pilon10x3_prot_3species/tetra.contigs.10x.pilon_3.fa.maker.output/tetra.contigs.10x.pilon_3.fa_master_datastore_index.log
-
-rename 's/genome/tetra10xpilonx3.zff.length50_aed0.25/g' *
-for i in *; do mv $i $(echo $i | sed 's/genome/tetra10xpilonx3.zff.length50_aed0.25/'); done
-
-
-# gather some stats and validate
-fathom tetra10xpilonx3.zff.length50_aed0.25.ann tetra10xpilonx3.zff.length50_aed0.25.dna -gene-stats > gene-stats.log
-fathom tetra10xpilonx3.zff.length50_aed0.25.ann tetra10xpilonx3.zff.length50_aed0.25.dna -validate > validate.log
-
-# collect the training sequences and annotations, plus 1000 surrounding bp for training
-fathom tetra10xpilonx3.zff.length50_aed0.25.ann tetra10xpilonx3.zff.length50_aed0.25.dna -categorize 1000 > categorize.log
-fathom uni.ann uni.dna -export 1000 -plus > uni-plus.log
-
-# create the training parameters
-mkdir params
-cd params
-forge ../export.ann ../export.dna > ../forge.log
-cd ..
-
-# assembly the HMM
-hmm-assembler.pl tetra10xpilonx3.zff.length50_aed0.25 params > tetra10xpilonx3.zff.length50_aed0.25.hmm
-
-
-
-
-5. Re-run MAKER with augustus trained gene models
-
-# Recycle the mapping of empicial evidence we have from the first MAKER round, so we don't have to perform all the BLASTs, etc. again
-# transcript alignments
-awk '{ if ($2 == "est2genome") print $0 }' ../09_Pilon10x3_prot_3species/tetra.contigs.10x.pilon_3.fa.maker.output/tetra.contigs.10x.pilon_3.fa.all.gff > tetra10xpilonx3.maker.est2genome.gff
-# protein alignments
-awk '{ if ($2 == "protein2genome") print $0 }' ../09_Pilon10x3_prot_3species/tetra.contigs.10x.pilon_3.fa.maker.output/tetra.contigs.10x.pilon_3.fa.all.gff > tetra10xpilonx3.maker.protein2genome.gff
-# repeat alignments
-awk '{ if ($2 ~ "repeat") print $0 }' ../09_Pilon10x3_prot_3species/tetra.contigs.10x.pilon_3.fa.maker.output/tetra.contigs.10x.pilon_3.fa.all.gff > tetra10xpilonx3.maker.repeats.gff
-
-
-
-
-
-###################### MAKER Annotation - ab inito gene model predictions (i.e. Round #2) ###################### 
-
-1. Copy MAKER opts from first round and add AUGUSTUS hmm file and tell it not to predict gene models only from ESTs or Proteins
-
-maker_opts.ctl:
- augustus_species=tetraselmis
- est2genome=0
- protein2genome=0
-
-sbatch run_maker
-
-
-
-
-
-###### BUSCO Analysis ######
-
-module load python3
-
-!! If running in genome mode (--mode geno) need to set the paths to augustus
-
-export PATH="/mnt/home/azodichr/LocalPrograms/augustus.2.5.5/bin:$PATH"
-export PATH="/mnt/home/azodichr/LocalPrograms/augustus.2.5.5/scripts:$PATH"
-export AUGUSTUS_CONFIG_PATH="/mnt/home/azodichr/LocalPrograms/augustus.2.5.5/config/"
-
-
-# Genome 
-ln -s /mnt/gs18/scratch/users/azodichr/10xgenom_2232_20180405/01_bam/Tet_10x_pilon_round3/tetra.contigs.10x.pilon_3.fa.fasta 00_Genome/.
-export BUSCO_CONFIG_FILE="/mnt/home/azodichr/02_Tetraselmis/07_BUSCO/busco/config/config.ini"
-python ../busco/scripts/run_BUSCO.py --i tetra.contigs.10x.pilon_3.fa.fasta --out tetra_pilon10xx3_genome --lineage_path ../busco/lineages/eukaryota_odb9/ --mode geno
-
-# Transcriptomes (testing to see if we're just not annotating them well)
-ln -s /mnt/gs18/scratch/users/azodichr/10xgenom_2232_20180405/02_Assembly/trinity_181228.Trinity.fasta 02_transcriptomes/.
-python ../busco/scripts/run_BUSCO.py --i trinity_181228.Trinity.fasta --out tetra_trans_TrinGuid_Pilon10xx3 --lineage_path ../busco/lineages/eukaryota_odb9/ --mode tran
-
-# Protein sequences from MAKER annotation
-ln -s ~/02_Tetraselmis/06_MAKER/07_trin_10xpilonx3_2/tetra.contigs.10x.pilon_3.fa.maker.output/tetra.contigs.10x.pilon_3.fa.all.maker.proteins.fasta 01_peptides/.
-python ../busco/scripts/run_BUSCO.py --i tetra.contigs.10x.pilon_3.fa.all.maker.proteins.fasta --out tetra_prot_TrinGuid_Pilon10xx3 --lineage_path ../busco/lineages/eukaryota_odb9/ --mode prot
-
-
-
-# Plot BUSCO summaries:
-wd: /mnt/home/azodichr/02_Tetraselmis/07_BUSCO/BUSCO_summaries 
-cp ../00_Genome/run_tetra_pilon10x_genome/short_summary_tetra_pilon10x_genome.txt .
-cp ../01_peptides/run_tetra_prot_TrinGuid_Pilon10x/short_summary_tetra_prot_TrinGuid_Pilon10x.txt .
-cp ../02_transcriptomes/run_tetra_trans_TrinGuid_Pilon10x/short_summary_tetra_trans_TrinGuid_Pilon10x.txt .
-
-python busco/scripts/generate_plot.py --working_directory BUSCO_summaries/
 
 
 
