@@ -1,3 +1,9 @@
+# Tetraselmis Genome Assembly & Annotation
+[Genome Assebmly](#genome-assembly)
+[Genome Polishing](#genome-polishing)
+[Genome Annotation](#genome-annotation)
+[BUSCO Analysis](#busco-analysis)
+[Expression level time course](#expression-level-time-course)
 
 
 # Genome Assembly
@@ -8,7 +14,7 @@ Completed by Nick Panchy
 
 **Plan: Polish genome 3 times with Pilon using 10xGenomics short reads***
 
-# Back up 10xGenomics data
+**Back up 10xGenomics data**
 Raw data: /data/scratch/azodi/TetraselmisProject/10xGenomics_RawData/fastq_path/HTCLVBBXX/Tetrastriata/Tetrastriata_S1_L006_*_001.fastq.gz
 Barcodes Trimmed: /data/scratch/azodi/TetraselmisProject/10xGenomics_BarcodeTrimmed/barcoded.fastq.gz
 Genome saved on calculon: /data/scratch/panchy/TetraselmisAssembly/Tetra664_04212017/unitigging/5.3-concensus_dg24_db24_gsize380000000_el499/tetra.contigs.fasta
@@ -28,7 +34,7 @@ python ~shius/codes/qsub_hpc.py -f submit -u azodichr -c job_bowtie_round2.sh -w
 ```
 
 Example sort job:
-````
+```
 #PBS -q main
 #PBS -l walltime=12:00:00,mem=100gb
 #PBS -N sort_samtools
