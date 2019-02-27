@@ -1,8 +1,14 @@
 # Tetraselmis Genome Assembly & Annotation
+**Table of Contents**
+
 [Genome Assebmly](#genome-assembly)
+
 [Genome Polishing](#genome-polishing)
+
 [Genome Annotation](#genome-annotation)
+
 [BUSCO Analysis](#busco-analysis)
+
 [Expression level time course](#expression-level-time-course)
 
 
