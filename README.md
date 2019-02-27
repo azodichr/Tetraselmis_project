@@ -1,7 +1,7 @@
 # Tetraselmis Genome Assembly & Annotation
 **Table of Contents**
 
-1. [Genome Assebmly](#genome-assembly)
+1. [Genome Assembly](#genome-assembly)
 2. [Genome Polishing](#genome-polishing)
 3. [Genome Annotation](#genome-annotation)
 4. [BUSCO Analysis](#busco-analysis)
@@ -125,16 +125,14 @@ This pipeline was developed based on the [Augustus retraining protocol](http://a
 
 ### Input
 
-A. genome: 
-B. EST Evidence: 
-C. Protein Homology Evidence
+Needed input: Genome (*/mnt/home/azodichr/02_Tetraselmis/01_FinalDrafts/tetra.contigs.10x.pilon_3.fasta*), [EST Evidence](#est-evidence), and [protein homology evidence](#protein-homology-evidence)
 
-maker_opts.ctl
+*maker_opts.ctl*
 est2genome=1
 protein2genome=1
 
 
-#### B. EST Evidence
+#### EST Evidence
 wkdir: /mnt/gs18/scratch/users/azodichr/10xgenom_2232_20180405/02_Assembly/
 
 **Set up alignment using HISAT2**
@@ -144,11 +142,9 @@ module load OpenMPI/2.1.2
 module load GMAP-GSNAP/2018-05-11
 gmap_build -d Tet_Pilon3_genome -D . -k 15 /mnt/gs18/scratch/users/azodichr/10xgenom_2232_20180405/01_bam/Tet_10x_pilon_round3/tetra.contigs.10x.pilon_3.fa.fasta
 
-
 module load GCC/4.7.2
 module load hisat2
 hisat2-build /mnt/gs18/scratch/users/azodichr/10xgenom_2232_20180405/01_bam/Tet_10x_pilon_round3/tetra.contigs.10x.pilon_3.fa.fasta tetra.contigs.10xpilon3
-
 
 module load GCC/6.4.0-2.28  
 module load OpenMPI/2.1.2
@@ -185,7 +181,7 @@ module load intel/2017b Trinity/2.6.6
 /opt/software/Trinity/2.6.6/util/TrinityStats.pl trinity_181228.Trinity.fasta > trinity_181228.Trinity.fasta.stats
 ```
 
-#### C. Protein Homology Evidence
+#### Protein Homology Evidence
 
 **CEG (Core Eukaryotic Genes)**
 http://korflab.ucdavis.edu/Datasets/genome_completeness/index.html#SCT2
@@ -195,36 +191,26 @@ mv 248.prots.fa.gz CEG.fa
 ```
 
 **GreenCut Genes**
-Got GreenCut list from Ben (/mnt/home/azodichr/02_Tetraselmis/06_MAKER/GreenCut2JBC2011.xls)
+GreenCut list from Ben (/mnt/home/azodichr/02_Tetraselmis/06_MAKER/GreenCut2JBC2011.xls)
 Arabidopsis: pull Arabidopsis IDs and get longest peptide: 
 ```python ~shius/codes/FastaManager.py -f getseq2 -fasta ~/Sequences/Arabidopsis/TAIR10_pep_20101214_updated.txt.longest.mod.fa -name greencut_at```
 
 Chlammy: Pull JGI 3 names and convert them to JGI v5.5
 http://pathways.mcdb.ucla.edu/algal/id_conversion.html
 
-Do all CEG and GreenCut without chloroplast or mitochondrial genes:
-$ python ~shius/codes/FastaManager.py -f getseq2 -name greencut_noPlastid_cd -fasta ~/Sequences/Chlammy/Creinhardtii_281_v5.5.protein_primaryTranscriptOnly.fa.mod.fa
-$ cat CEG.fa greencut_noPlastid_cd.fa > annot_proteins.fa
+Select all non plastid CEG and GreenCut genes:
+```
+python ~shius/codes/FastaManager.py -f getseq2 -name greencut_noPlastid_cd -fasta ~/Sequences/Chlammy/Creinhardtii_281_v5.5.protein_primaryTranscriptOnly.fa.mod.fa
+cat CEG.fa greencut_noPlastid_cd.fa > annot_proteins.fa
+```
 
-
-### REDO MAKER AGAIN
-- Use chlammy, ostreococcus, and chlorella (downloaded from JGI). Pull chlammy straight from greencut excel file key and do reciprocal-blast ostreococcus and chlorella against
-
-
-Cite:
-Chlorella genome: Blanc G, Duncan G, Agarkova I, Borodovsky M, Gurnon J, Kuo A, Lindquist E, Lucas S, Pangilinan J, Polle J, Salamov A, Terry A, Yamada T, Dunigan DD, Grigoriev IV, Claverie JM, Van Etten JL. The Chlorella variabilis NC64A genome reveals adaptation to photosymbiosis, coevolution with viruses, and cryptic sex. 
-Plant Cell. 2010 Sep;22(9):2943-55. doi: 10.1105/tpc.110.076406. Epub 2010 Sep 17. 
-Blanc-Mathieu R, Verhelst B, Derelle E, Rombauts S, Bouget FY, Carre I, Chateau A, Eyre-Walker A, Grimsley N, Moreau H, Piegu B, Rivals E, Schackwitz W, Van de Peer Y, Piganeau G 
-An improved genome of the model marine alga Ostreococcus tauri unfolds by assessing Illumina de novo assemblies. 
-BMC Genomics. 2014 Dec 13;15:1103. doi: 10.1186/1471-2164-15-1103. 
-Palenik B, Grimwood J, Aerts A, Rouze P, Salamov A, Putnam N, Dupont C, Jorgensen R, Derelle E, Rombauts S, Zhou K, Otillar R, Merchant SS, Podell S, Gaasterland T, Napoli C, Gendler K, Manuell A, Tai V, Vallon O, Piganeau G, Jancek S, Heijde M, Jabbari K, Bowler C, Lohr M, Robbens S, Werner G, Dubchak I, Pazour GJ, Ren Q, Paulsen I, Delwiche C, Schmutz J, Rokhsar D, Van de Peer Y, Moreau H, Grigoriev IV. The tiny eukaryote Ostreococcus provides genomic insights into the paradox of plankton speciation. 
-Proc Natl Acad Sci U S A. 2007 May 1;104(18):7705-10. doi: 10.1073/pnas.0611046104. Epub 2007 Apr 25. 
-
-
+** Add chlorella repiprocal best matches to Chlammy CEG and Greencut (non-plastid) genes **
+*Note - also tried to add ostreococcus genes, but only one hit reciprocal best match hit, so just using chlorella*
+Downloaded from JGI
+```
 wd: /mnt/home/azodichr/02_Tetraselmis/06_MAKER/process_training_proteins
 module purge
 module load BLAST/2.2.26-Linux_x86_64
-
 
 formatdb -i Chlorella_NC64A.best_proteins.fasta -p T
 formatdb -i Ostta4221_3_GeneCatalog_proteins_20161028.aa.fasta -p T
@@ -236,17 +222,9 @@ blastall -p blastp -i greencut_noPlastid_cd.fa -d Chlorella_NC64A.best_proteins.
 python ~/GitHub/Utilities/ParseBlast.py -f get_reciprocal -blast Os_greencut_hits.txt
 python ~/GitHub/Utilities/ParseBlast.py -f get_reciprocal -blast Cnc64A_greencut_hits.txt
 
-* Only one hit for ostreococcus, so just use chlammy and chlorella
-
 cat Cnc64A_greencut_hits.txt.recip ../CEG.fa greencut_noPlastid_cd.fa > proteins_CEG_GCcr_GCc64.fa
-1813 proteins!!!
-
-wd: /mnt/home/azodichr/02_Tetraselmis/06_MAKER/09_Pilon10x3_prot_3species
-ln -s ../process_training_proteins/proteins_CEG_GCcr_GCc64.fa .
-
-
-
-
+```
+**1813 proteins to use as protein homology evidence**
 
 
 
