@@ -123,16 +123,12 @@ This pipeline was developed based on the [Augustus retraining protocol](http://a
 ## 1. Initial MAKER Analysis
 *See Expression level time course section for details on QC and trimming RNA-Seq data
 
-### Input
-
 Needed input: Genome (*/mnt/home/azodichr/02_Tetraselmis/01_FinalDrafts/tetra.contigs.10x.pilon_3.fasta*), [EST Evidence](#est-evidence), and [protein homology evidence](#protein-homology-evidence)
 
-*maker_opts.ctl*
-est2genome=1
-protein2genome=1
 
 
-#### EST Evidence
+
+### EST Evidence
 wkdir: /mnt/gs18/scratch/users/azodichr/10xgenom_2232_20180405/02_Assembly/
 
 **Set up alignment using HISAT2**
@@ -181,7 +177,7 @@ module load intel/2017b Trinity/2.6.6
 /opt/software/Trinity/2.6.6/util/TrinityStats.pl trinity_181228.Trinity.fasta > trinity_181228.Trinity.fasta.stats
 ```
 
-#### Protein Homology Evidence
+### Protein Homology Evidence
 
 **CEG (Core Eukaryotic Genes)**
 http://korflab.ucdavis.edu/Datasets/genome_completeness/index.html#SCT2
@@ -227,14 +223,132 @@ cat Cnc64A_greencut_hits.txt.recip ../CEG.fa greencut_noPlastid_cd.fa > proteins
 **1813 proteins to use as protein homology evidence**
 
 
+### Run MAKER
+*maker_opts.ctl*
+est2genome=1
+protein2genome=1
+
+wd: 06_MAKER/09_Pilon10x3_prot_3species/
 
 
 ## 2. Train gene prediction models (Augustus and SNAP)
+### SNAP
+Export 'confident' gene models from MAKER and rename to something meaningful
+```
+module purge
+module load GCC/7.2.0-2.29 MPICH/3.2.1
+module load maker/2.31.9
+maker2zff -x 0.25 -l 50 -d ../09_Pilon10x3_prot_3species/tetra.contigs.10x.pilon_3.fa.maker.output/tetra.contigs.10x.pilon_3.fa_master_datastore_index.log
+for i in *; do mv $i $(echo $i | sed 's/genome/tetra10xpilonx3.zff.length50_aed0.25/'); done
+```
+
+Gather stats, validate, and collect training sequences and annotations plus 1kb surrounding for training
+```
+fathom tetra10xpilonx3.zff.length50_aed0.25.ann tetra10xpilonx3.zff.length50_aed0.25.dna -gene-stats > gene-stats.log
+fathom tetra10xpilonx3.zff.length50_aed0.25.ann tetra10xpilonx3.zff.length50_aed0.25.dna -validate > validate.log
+fathom tetra10xpilonx3.zff.length50_aed0.25.ann tetra10xpilonx3.zff.length50_aed0.25.dna -categorize 1000 > categorize.log
+fathom uni.ann uni.dna -export 1000 -plus > uni-plus.log
+```
+
+Create the training parameters and assemble the HMM
+```
+mkdir params
+cd params
+forge ../export.ann ../export.dna > ../forge.log
+cd ../
+hmm-assembler.pl tetra10xpilonx3.zff.length50_aed0.25 params > tetra10xpilonx3.zff.length50_aed0.25.hmm
+```
+
+
+### Augustus
+module load icc/2017.1.132-GCC-6.3.0-2.27  impi/2017.1.132
+module load augustus
+
+#### Refine and format set of annotated proteins to train and test on
+** A. Remove genes from ab initio MAKER round 1 that have >90% amino acid similarity (over 90% of the length of the gene) with other genes (cause redundant genes can cause overfitting).**
+```
+grep -P "maker\tgene" tetra.contigs.10x.pilon_3.fa.all.gff > tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly
+python ~/GitHub/Utilities/FastaManager.py -f gff_to_coord -gff tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly
+python ~/GitHub/Utilities/FastaManager.py -f get_stretch4 -coords tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord -fasta ../tetra.contigs.10x.pilon_3.fasta
+
+module purge
+module load BLAST/2.2.26-Linux_x86_64
+formatdb -i tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord.fa -p F
+blastall -p blastn -d tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord.fa -i tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord.fa -o blastnE00001 -e 0.00001 -a 8 -m 8
+python ../../07_trin_10xpilonx3_2/augustus_retrain_strict/filter_genes_1.py -b blastnE00001 -f tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord.fa
+python ~/GitHub/Utilities/FastaManager.py -f getseq2 -fasta tetra.contigs.10x.pilon_3.fa.all.gff_genesOnly.coord.fa -name tetra_genes_DupsRemoved.txt
+```
+*Note: Went from 29,962 genes for training to 7,949 genes *
+
+** B. Remove genes that aren't hits in GreenCut**
+formatdb -i tetra_genes_DupsRemoved.txt.fa -p F
+```
+formatdb -i ../proteins_CEG_GCcr_GCc64.fa -p T
+blastall -p blastx -d ../proteins_CEG_GCcr_GCc64.fa -i tetra_genes_DupsRemoved.txt.fa -o blastx_greencut -e 0.01 -a 8 -m 8
+python ../../07_trin_10xpilonx3_2/augustus_retrain_strict/filter_genes_2.py -b blastx_greencut -f1 tetra_genes_DupsRemoved.txt
+python ../../07_trin_10xpilonx3_2/augustus_retrain_strict/filter_genes_3.py -gff tetra.contigs.10x.pilon_3.fa.all.gff -f tetra_genes_DupsRemoved_GreenCutHits.txt
+```
+*Note: Went from 7,949 genes for training to 983 genes*
+
+** C. Convert gff to genbank and split into training and testing (90/10) **
+```
+perl ~/GitHub/Augustus/scripts/gff2gbSmallDNA.pl tetra.contigs.10x.pilon_3.fa.all.gff.filtered ~/02_Tetraselmis/06_MAKER/07_trin_10xpilonx3_2/tetra.contigs.10x.pilon_3.fasta 1000 tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank
+perl ~/GitHub/Augustus/scripts/randomSplit.pl tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank 98
+```
+*Note 1000 is the max-size-gene-flanking (i.e. it will grab 1kb up and downstream of the gene to add to the genebank file)
+
+
+#### Optimize hyper-parameters and then use to train/test augustus gene predictor
+Prep configuration directory for tetraselmis
+```
+module load icc/2017.1.132-GCC-6.3.0-2.27  impi/2017.1.132
+module load augustus
+cd /mnt/home/azodichr/GitHub/Augustus/config/species/
+mkdir tetraselmis_2sp
+cp generic/* tetraselmis_2sp/.
+cd tetraselmis_2sp/
+for i in *; do mv $i $(echo $i | sed 's/generic/tetraselmis_2sp/'); done
+sed -i 's/generic_/tetraselmis_2sp_/g' tetraselmis_2sp_parameters.cfg
+```
+
+Optimize & train using optimal parameters
+```
+optimize_augustus.pl --species=tetraselmis_2sp tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank.train --metapars=/mnt/home/azodichr/GitHub/Augustus/config/species/tetraselmis_2sp/tetraselmis_2sp_metapars.cfg --AUGUSTUS_CONFIG_PATH=/mnt/home/azodichr/GitHub/Augustus/config/
+```
+
+**Training Results**
+|   	|Sensitivity	|Specificity   	|
+|---	|---	|---	|
+|Nucleotide level 	|0.87 |0.69 	|
+|Transcript   	|0.104|0.082|
+
+Apply to testing set
+```
+augustus --species=tetraselmis_2sp --AUGUSTUS_CONFIG_PATH=/mnt/home/azodichr/GitHub/Augustus/config/ tetra.contigs.10x.pilon_3.fa.all.gff.filtered.genebank.test > test_results.txt
+```
+**Testing Results**
+|   	|Sensitivity	|Specificity   	|
+|---	|---	|---	|
+|Nucleotide level 	|0.88 |0.71 	|
+|Transcript   	|0.13|0.11|
 
 
 
 ## 3. Run MAKER with ab initio gene predictors
-
+**Recycle the mapping of empicial evidence we have from the first MAKER round, so we don't have to perform all the BLASTs, etc. again**
+```
+awk '{ if ($2 == "est2genome") print $0 }' ../09_Pilon10x3_prot_3species/tetra.contigs.10x.pilon_3.fa.maker.output/tetra.contigs.10x.pilon_3.fa.all.gff > tetra10xpilonx3.maker.est2genome.gff
+awk '{ if ($2 == "protein2genome") print $0 }' ../09_Pilon10x3_prot_3species/tetra.contigs.10x.pilon_3.fa.maker.output/tetra.contigs.10x.pilon_3.fa.all.gff > tetra10xpilonx3.maker.protein2genome.gff
+awk '{ if ($2 ~ "repeat") print $0 }' ../09_Pilon10x3_prot_3species/tetra.contigs.10x.pilon_3.fa.maker.output/tetra.contigs.10x.pilon_3.fa.all.gff > tetra10xpilonx3.maker.repeats.gff
+```
+Parameters to adjust in the maker_opts.ctl file:
+-est_gff=/mnt/home/azodichr/02_Tetraselmis/06_MAKER/11_Round2/tetra10xpilonx3.maker.est2genome.gff #aligned ESTs or mRNA-seq from an external GFF3 file
+-protein_gff=/mnt/home/azodichr/02_Tetraselmis/06_MAKER/11_Round2/tetra10xpilonx3.maker.est2genome.gff  #aligned protein homology evidence from an external GFF3 file
+-rm_gff=/mnt/home/azodichr/02_Tetraselmis/06_MAKER/11_Round2/tetra10xpilonx3.maker.repeats.gff #pre-identified repeat elements from an external GFF3 file
+-snaphmm=/mnt/home/azodichr/02_Tetraselmis/06_MAKER/10_SNAP/tetra10xpilonx3.zff.length50_aed0.25.hmm #SNAP HMM file
+-augustus_species=tetraselmis_2sp #Augustus gene prediction species model
+-est2genome=0
+-protein2genome=0
 
 
 ## 4. Iteratively run MAKER?
