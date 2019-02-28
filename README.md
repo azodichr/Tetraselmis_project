@@ -119,7 +119,7 @@ grep 'BreakFix' slurm-4765115.out | wc -l
 
 # Genome Annotation
 
-This pipeline was developed based on the [Augustus retraining protocol](http://augustus.gobics.de/binaries/retraining.html) and from [this GitHub post](https://www.biostars.org/p/261203/)
+This pipeline was developed based on the [Augustus retraining protocol](http://augustus.gobics.de/binaries/retraining.html) and from [this GitHub post](https://gist.github.com/darencard/bb1001ac1532dd4225b030cf0cd61ce2)
 ## 1. Initial MAKER Analysis
 *See Expression level time course section for details on QC and trimming RNA-Seq data
 
@@ -351,8 +351,19 @@ Parameters to adjust in the maker_opts.ctl file:
 -est2genome=0
 -protein2genome=0
 
+sbatch run_maker
 
-## 4. Iteratively run MAKER?
+**Check results**
+```
+grep "FAILED" tetra.contigs.10x.pilon_3_master_datastore_index.log | wc -l
+fasta_merge -d tetra.contigs.10x.pilon_3_master_datastore_index.log
+gff3_merge -d tetra.contigs.10x.pilon_3_master_datastore_index.log
+grep '>' tetra.contigs.10x.pilon_3.all.maker.non_overlapping_ab_initio.proteins.fasta | wc -l
+```
+*Number of proteins/genes found: 67,776 (was 29,962 before retraining gene predictors)*
+
+## 4. Iteratively run MAKER
+Repeat Augustus and SNAP training using these 67,776 genes (XX remaining for Augustus after filtering)
 
 
 
