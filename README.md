@@ -363,7 +363,15 @@ grep '>' tetra.contigs.10x.pilon_3.all.maker.non_overlapping_ab_initio.proteins.
 *Number of proteins/genes found: 67,776 (was 29,962 before retraining gene predictors)*
 
 ## 4. Iteratively run MAKER
-Repeat Augustus and SNAP training using these 67,776 genes (XX remaining for Augustus after filtering)
+Repeat Augustus and SNAP training using these 67,776 genes (1,668 remaining for Augustus after filtering)
+
+Test results from Augustus:
+|Type|Sensitivity	|Specificity|
+|---	|---	|---	|
+|Nucleotide level|0.79|0.75|
+|Transcript|0.11|0.10|
+
+Repeat MAKER Annotation
 
 
 
