@@ -363,16 +363,43 @@ grep '>' tetra.contigs.10x.pilon_3.all.maker.non_overlapping_ab_initio.proteins.
 *Number of proteins/genes found: 67,776 (was 29,962 before retraining gene predictors)*
 
 ## 4. Iteratively run MAKER
+
+**Round 2**
+
 Repeat Augustus and SNAP training using these 67,776 genes (1,668 remaining for Augustus after filtering)
 
 Test results from Augustus:
+
 |Type|Sensitivity	|Specificity|
 |---	|---	|---	|
 |Nucleotide level|0.79|0.75|
 |Transcript|0.11|0.10|
 
-Repeat MAKER Annotation
+Repeat MAKER Annotation & BUSCO analysis
+INFO	273 Complete BUSCOs (C)
+INFO	83 Complete and single-copy BUSCOs (S)
+INFO	190 Complete and duplicated BUSCOs (D)
+INFO	14 Fragmented BUSCOs (F)
+INFO	16 Missing BUSCOs (M)
 
+
+**Round 3**
+
+Repeat Augustus and SNAP training using these 67,776 genes (1,668 remaining for Augustus after filtering)
+
+Test results from Augustus:
+
+|Type|Sensitivity	|Specificity|
+|---	|---	|---	|
+|Nucleotide level|x|x|
+|Transcript|x|x|
+
+Repeat MAKER Annotation & BUSCO analysis
+INFO	x Complete BUSCOs (C)
+INFO	x Complete and single-copy BUSCOs (S)
+INFO	x Complete and duplicated BUSCOs (D)
+INFO	x Fragmented BUSCOs (F)
+INFO	x Missing BUSCOs (M)
 
 
 ## 5. Assess quality using BUSCO 
