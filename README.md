@@ -375,6 +375,9 @@ Test results from Augustus:
 |Nucleotide level|0.79|0.75|
 |Transcript|0.11|0.10|
 
+fasta_merge -d tetra.contigs.10x.pilon_3_master_datastore_index.log
+gff_merge -d tetra.contigs.10x.pilon_3_master_datastore_index.log
+
 Repeat MAKER Annotation & BUSCO analysis
 INFO	273 Complete BUSCOs (C)
 INFO	83 Complete and single-copy BUSCOs (S)
